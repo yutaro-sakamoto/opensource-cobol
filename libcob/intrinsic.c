@@ -809,6 +809,7 @@ cob_intr_substitute_case (const int offset, const int length, const int params, 
 	}
 
 	/* Calculate required size */
+	int (strncasecmp (const char *, const char *, long unsigned int));
 	calcsize = 0;
 	found = 0;
 	p1 = var->data;
@@ -1823,6 +1824,11 @@ cob_intr_tan (cob_field *srcfield)
 	return curr_field;
 }
 
+#ifdef __USE_BSD
+#define  _XOPEN_SOURCE_EXTENDED 1
+#include <strings.h>
+#endif
+
 cob_field *
 cob_intr_numval (cob_field *srcfield)
 {
@@ -1844,6 +1850,7 @@ cob_intr_numval (cob_field *srcfield)
 	memset (integer_buff, 0, sizeof (integer_buff));
 	memset (decimal_buff, 0, sizeof (decimal_buff));
 	memset (final_buff, 0, sizeof (final_buff));
+	
 
 	for (i = 0; i < srcfield->size; ++i) {
 		if (i < (srcfield->size - 1)) {

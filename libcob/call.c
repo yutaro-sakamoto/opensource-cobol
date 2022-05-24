@@ -22,6 +22,7 @@
 #include "config.h"
 #include "defaults.h"
 
+#define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -41,6 +42,7 @@
 /* #define COB_BORKED_DLOPEN */
 	
 #ifdef	USE_LIBDL
+
 
 #define __USE_GNU	1
 #include <dlfcn.h>
@@ -585,6 +587,9 @@ cob_init_call (void)
 
 #ifndef	COB_ALT_HASH
 	call_table = cob_malloc (sizeof (struct call_hash *) * HASH_SIZE);
+#endif
+#ifdef __USE_BSD
+#include <strings.h>.strcasecmp 
 #endif
 
 	call_filename_buff = cob_malloc (CALL_FILEBUFF_SIZE);
