@@ -319,7 +319,7 @@ ircvcommit (char *pcbuffer)
 static int
 ircvdelete (char *pcbuffer)
 {
-	char	*pcrow __attribute__((unused));
+	char	*pcrow;
 	off_t	trownumber;
 	int	ihandle, ipid;
 
@@ -396,8 +396,7 @@ static int
 ircvfileclose (char *pcbuffer)
 {
 	struct RCV_HDL	*psrcv;
-	int		ihandle, ipid;
-	int             ivarlenflag __attribute__((unused));
+	int		ihandle, ivarlenflag, ipid;
 
 	ihandle = inl_ldint (pcbuffer);
 	ivarlenflag = inl_ldint (pcbuffer + INTSIZE);

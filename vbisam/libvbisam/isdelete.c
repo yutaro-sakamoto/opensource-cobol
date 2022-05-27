@@ -19,8 +19,6 @@
 
 #include	"isinternal.h"
 
-
-
 static char	*pcwritebuffer;
 
 /* Local functions */
@@ -29,10 +27,8 @@ static int
 irowdelete (const int ihandle, off_t trownumber)
 {
 	struct DICTINFO	*psvbptr;
-	int	        ikeynumber, iresult;
-        off_t		tdupnumber[MAXSUBS] __attribute__((unused));
-
-	
+	int		ikeynumber, iresult;
+	off_t		tdupnumber[MAXSUBS];
 
 	psvbptr = psvbfile[ihandle];
 	/*
