@@ -55,8 +55,8 @@ main (int iArgc, char **ppcArgv)
 		cRecord [256];
 	struct	keydesc
 		sKeydesc;
-	char	cLogfileName [100],
-		cCommand [100];
+	char	cLogfileName [95],
+		cCommand [204];
 	char	cFileName [] = "IsamTest";
 
 	memset (&sKeydesc, 0, sizeof (sKeydesc));
@@ -93,7 +93,6 @@ main (int iArgc, char **ppcArgv)
 #else
 		sprintf (cCommand, "rm -f %s; touch %s", cLogfileName, cLogfileName);
 #endif
-		system (cCommand);
 		return (0);
 	}
 	sprintf (cLogfileName, "RECOVER");

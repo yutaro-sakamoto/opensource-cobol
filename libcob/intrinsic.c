@@ -1048,7 +1048,7 @@ cob_intr_current_date (const int offset, const int length)
 	cob_field	field;
 #if defined(HAVE_SYS_TIME_H) && defined(HAVE_GETTIMEOFDAY)
 	struct timeval	tmv;
-	char		buff2[8];
+	char		buff2[32];
 #endif
 #endif	/* _WIN32 */
 	char		buff[24];
@@ -1106,7 +1106,7 @@ cob_intr_current_date (const int offset, const int length)
 #endif
 
 #if defined(HAVE_SYS_TIME_H) && defined(HAVE_GETTIMEOFDAY)
-	snprintf(buff2, 7, "%2.2ld", tmv.tv_usec / 10000);
+	snprintf(buff2, 24, "%2.2ld", tmv.tv_usec / 10000);
 	memcpy (&buff[14], buff2, 2);
 #endif
 #endif	/* _WIN32 */
