@@ -27,7 +27,6 @@
 #include <string.h>
 #include <ctype.h>
 #include <time.h>
-#include <strings.h>
 
 #ifdef	HAVE_UNISTD_H
 #include <unistd.h>
@@ -1814,7 +1813,7 @@ cob_accept_time (cob_field *f)
 	time_t		t;
 #if defined(HAVE_SYS_TIME_H) && defined(HAVE_GETTIMEOFDAY)
 	struct timeval	tmv;
-	char		buff2[18];
+	char		buff2[17];
 #endif
 #endif
 	char		s[12];
