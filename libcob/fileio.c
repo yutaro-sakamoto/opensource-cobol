@@ -211,7 +211,7 @@ DIR					*listdir_handle;
 struct dirent		*listdir_filedata;
 #endif
 
-#define        OPENMODESIZE  6
+#define        OPENMODESIZE  5
 #define        READOPTSSIZE  4
 #define        STARTCONDSIZE 2
 #define        EXCPTCODESIZE 6
@@ -4224,7 +4224,7 @@ cob_close (cob_file *f, const int opt, cob_field *fnstatus)
 {
 	char	openMode[OPENMODESIZE];
 
-	memset (openMode, 129, sizeof (openMode));
+	memset (openMode, 0, sizeof (openMode));
 	sprintf (openMode, "%02d", f->last_open_mode);
 	if (cob_invoke_fun (COB_IO_CLOSE, (char *)f, NULL, NULL, fnstatus, openMode, NULL, NULL)) {
 		return;
