@@ -1827,7 +1827,7 @@ process_translate (struct filename *fn)
 		fclose (q->local_storage_file);
 	}
 	return 0;
-}
+} 
 
 static int
 process_compile (struct filename *fn)
