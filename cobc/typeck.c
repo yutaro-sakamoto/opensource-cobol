@@ -4674,11 +4674,11 @@ move_error (cb_tree src, cb_tree dst, const size_t value_flag, const int flag,
 	loc = src->source_line ? src : dst;
 	if (value_flag) {
 		/* VALUE clause */
-		cb_warning_x (loc, msg);
+		cb_warning_x (loc,"%s", msg);
 	} else {
 		/* MOVE statement */
 		if (flag) {
-			cb_warning_x (loc, msg);
+			cb_warning_x (loc,"%s", msg);
 			if (src_flag) {
 				warning_destination (src);
 			}
@@ -4724,11 +4724,11 @@ move_error2 (cb_tree src, cb_tree dst, const size_t value_flag, const int flag,
 	loc = src->source_line ? src : dst;
 	if (value_flag) {
 		/* VALUE clause */
-		cb_error_x (loc, msg);
+		cb_error_x (loc, "%s",  msg);
 	} else {
 		/* MOVE statement */
 		if (flag) {
-			cb_error_x (loc, msg);
+			cb_error_x (loc, "%s", msg);
 			if (src_flag) {
 				error_destination (src);
 			}
