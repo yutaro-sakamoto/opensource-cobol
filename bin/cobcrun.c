@@ -53,7 +53,11 @@ cobcrun_print_version (void)
 {
 	int	year;
 	int	day;
+<<<<<<< HEAD
 	char	buff[81];
+=======
+	char	buff[97];
+>>>>>>> warning/wformat_truncation
 	char	month[64];
 
 	memset (buff, 0, sizeof(buff));

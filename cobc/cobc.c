@@ -240,6 +240,7 @@ static jmp_buf		cob_jmpbuf;
 
 static int		wants_nonfinal = 0;
 static int		cb_flag_module = 0;
+
 static int		cb_flag_library = 0;
 static int		save_temps = 0;
 static int		save_csrc = 0;
@@ -1826,7 +1827,7 @@ process_translate (struct filename *fn)
 		fclose (q->local_storage_file);
 	}
 	return 0;
-}
+} 
 
 static int
 process_compile (struct filename *fn)
