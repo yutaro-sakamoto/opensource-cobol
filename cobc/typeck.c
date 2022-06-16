@@ -221,6 +221,10 @@ static const char	*const bin_sub_funcs[] = {
 	"cob_subswp_s64_binary"
 };
 
+/**
+ * Add a sample comment
+ */
+
 static const char	*const align_bin_compare_funcs[] = {
 	"cob_cmp_u8_binary",
 	"cob_cmp_align_u16_binary",
