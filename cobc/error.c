@@ -106,7 +106,7 @@ print_error (char *file, int line, const char *prefix, const char *fmt, va_list 
 		/* error output */
 		switch (cnt) {
 		case 0:
-			snprintf (errmsgbuff, COB_NORMAL_BUFF, fmt);
+			snprintf (errmsgbuff, COB_NORMAL_BUFF, "%s", fmt);
 			break;
 		case 1:
 			snprintf (errmsgbuff, COB_NORMAL_BUFF, fmt, allname[0]);
@@ -329,7 +329,7 @@ ambiguous_error (cb_tree x)
 				break;
 			}
 			strcat (errnamebuff, _(" defined here"));
-			cb_error_x (y, errnamebuff);
+			cb_error_x (y, "%s", errnamebuff);
 		}
 	}
 }
