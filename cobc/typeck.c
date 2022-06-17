@@ -221,6 +221,11 @@ static const char	*const bin_sub_funcs[] = {
 	"cob_subswp_s64_binary"
 };
 
+/**
+ *  * align_bin_compare_func[] has been removed
+ *   
+ */
+
 /* functions */
 
 static size_t
