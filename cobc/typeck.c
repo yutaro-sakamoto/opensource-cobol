@@ -220,14 +220,17 @@ static const char	*const bin_sub_funcs[] = {
 	"cob_subswp_s56_binary",
 	"cob_subswp_s64_binary"
 };
+<<<<<<< HEAD
 /**
  *  * Add a sample comment
  *  
  */
 
+=======
+>>>>>>> I have commented at the line where unused variables are removed
 /**
- *  * align_bin_compare_func[] has been removed
- *   
+ *  * Add a sample comment
+ *  
  */
 
 /* functions */
