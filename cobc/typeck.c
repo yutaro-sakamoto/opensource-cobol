@@ -220,10 +220,6 @@ static const char	*const bin_sub_funcs[] = {
 	"cob_subswp_s56_binary",
 	"cob_subswp_s64_binary"
 };
-/**
- *  * align_bin_compare_func[] has been removed
- *   
- */
 
 /* functions */
 
