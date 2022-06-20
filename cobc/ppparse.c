@@ -1941,7 +1941,7 @@ yyerrlab:
 	if (0 < yysize && yysize <= yymsg_alloc)
 	  {
 	    (void) yysyntax_error (yymsg, yystate, yychar);
-	    yyerror (yymsg);
+	    yyerror ("%s", yymsg);
 	  }
 	else
 	  {

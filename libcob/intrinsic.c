@@ -1247,6 +1247,7 @@ cob_intr_date_of_integer (cob_field *srcdays)
 	cob_field_attr	attr;
 	cob_field	field;
 	char		buff[25];
+	char		buff[24];
 
 	COB_ATTR_INIT (COB_TYPE_NUMERIC_DISPLAY, 8, 0, 0, NULL);
 	COB_FIELD_INIT (8, NULL, &attr);
@@ -1282,7 +1283,10 @@ cob_intr_date_of_integer (cob_field *srcdays)
 			}
 		}
 	}
+
 	snprintf (buff, 25, "%4.4d%2.2d%2.2d", baseyear, i, days);
+	snprintf (buff, 24, "%4.4d%2.2d%2.2d", baseyear, i, days);
+
 	memcpy (curr_field->data, buff, 8);
 	return curr_field;
 }
@@ -1296,6 +1300,8 @@ cob_intr_day_of_integer (cob_field *srcdays)
 	cob_field_attr	attr;
 	cob_field	field;
 	char		buff[19];
+	char		buff[18];
+
 
 	COB_ATTR_INIT (COB_TYPE_NUMERIC_DISPLAY, 7, 0, 0, NULL);
 	COB_FIELD_INIT (7, NULL, &attr);
@@ -1319,6 +1325,7 @@ cob_intr_day_of_integer (cob_field *srcdays)
 		}
 	}
 	snprintf (buff, 19, "%4.4d%3.3d", baseyear, days);
+	snprintf (buff, 18, "%4.4d%3.3d", baseyear, days);
 	memcpy (curr_field->data, buff, 7);
 	return curr_field;
 }
@@ -1838,6 +1845,7 @@ cob_intr_numval (cob_field *srcfield)
 	unsigned char	integer_buff[64];
 	unsigned char	decimal_buff[64];
 	unsigned char	final_buff[130];
+  unsigned char	final_buff[129];
 
 	COB_ATTR_INIT (COB_TYPE_NUMERIC_BINARY, 18, 0, COB_FLAG_HAVE_SIGN, NULL);
 	COB_FIELD_INIT (8, NULL, &attr);
@@ -1895,6 +1903,7 @@ cob_intr_numval (cob_field *srcfield)
 		memcpy (curr_field->data, (char *)&llval, 8);
 	} else {
 		snprintf ((char *)final_buff, 130, "%s%s.%s", sign ? "-" : "",
+		snprintf ((char *)final_buff, 129, "%s%s.%s", sign ? "-" : "",
 			 integer_buff, decimal_buff);
 		sscanf ((char *)final_buff, "%lf", &val);
 		make_double_entry ();
@@ -1919,6 +1928,7 @@ cob_intr_numval_c (cob_field *srcfield, cob_field *currency)
 	unsigned char	integer_buff[64];
 	unsigned char	decimal_buff[64];
 	unsigned char	final_buff[130];
+	unsigned char	final_buff[129];
 
 	COB_ATTR_INIT (COB_TYPE_NUMERIC_BINARY, 18, 0, COB_FLAG_HAVE_SIGN, NULL);
 	COB_FIELD_INIT (8, NULL, &attr);
@@ -1994,6 +2004,7 @@ cob_intr_numval_c (cob_field *srcfield, cob_field *currency)
 		memcpy (curr_field->data, (char *)&llval, 8);
 	} else {
 		snprintf ((char *)final_buff, 130, "%s%s.%s", sign ? "-" : "",
+		snprintf ((char *)final_buff, 129, "%s%s.%s", sign ? "-" : "",
 			 integer_buff, decimal_buff);
 		sscanf ((char *)final_buff, "%lf", &val);
 		make_double_entry ();
