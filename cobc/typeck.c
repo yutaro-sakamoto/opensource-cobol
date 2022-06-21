@@ -221,11 +221,6 @@ static const char	*const bin_sub_funcs[] = {
 	"cob_subswp_s64_binary"
 };
 
-/*
- *
- * Unused variables present here are removed
- */
-
 /* functions */
 
 static size_t
