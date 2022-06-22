@@ -1865,7 +1865,7 @@ process_compile (struct filename *fn)
 
 	buff = malloc(buffer_size);
         
-        .sprintf (buff, gflag_set ?
+        .sprintf (buff, gflag_set ?5
 		"%s /c %s %s /Od /MDd /Zi /FR /c /Fa\"%s\" /Fo\"%s\" %s" :
 		"%s /c %s %s /MD /c /Fa\"%s\" /Fo\"%s\" %s",
 			cob_cc, cob_cflags, cob_define_flags, name,
@@ -1952,8 +1952,8 @@ process_module_direct (struct filename *fn)
 
 #ifdef _MSC_VER
         format_string_length = strlen(gflag_set ?
-		" /c   /Od /MDd /Zi /FR /c /Fa\"\" /Fo\"\" " :
-		" /c   /MD /c /Fa\"\" /Fo\"\" ");
+		" /Od /MDd /LDd /Zi /FR /Fe\"\" /Fo\"\"\"\" " :
+		" /MD /LD /Fe\"\" /Fo\"\"\"\" ");
 
 	buffer_size =
 		format_string_length +
@@ -2050,8 +2050,8 @@ process_module (struct filename *fn)
 	}
 #ifdef _MSC_VER
         format_string_length = strlen(gflag_set ?
-		" /c   /Od /MDd /Zi /FR /c /Fa\"\" /Fo\"\" " :
-		" /c   /MD /c /Fa\"\" /Fo\"\" ");
+		" /Od /MDd /LDd /Zi /FR /Fe\"\"\"\" " :
+		" /MD /LD /Fe\"\"\"\" ");
 
 	buffer_size =
 		format_string_length +
@@ -2180,8 +2180,8 @@ process_library (struct filename *l)
 
 #ifdef _MSC_VER
         format_string_length = strlen(gflag_set ?
-		" /c   /Od /MDd /Zi /FR /c /Fa\"\" /Fo\"\" " :
-		" /c   /MD /c /Fa\"\" /Fo\"\" ");
+		" /Od /MDd /LDd /Zi /FR /Fe\"\" " :
+		" /MD /LD /Fe\"\" ");
 
 	buffer_size =
 		format_string_length +
@@ -2299,8 +2299,8 @@ process_link (struct filename *l)
 	}
 #ifdef _MSC_VER
         format_string_length = strlen(gflag_set ?
-		" /c   /Od /MDd /Zi /FR /c /Fa\"\" /Fo\"\" " :
-		" /c   /MD /c /Fa\"\" /Fo\"\" ");
+		" /Od /MDd /Zi /FR /Fe\"\" " :
+		" /MD /Fe\"\" ");
 
 	buffer_size =
 		format_string_length +
