@@ -1832,8 +1832,11 @@ process_translate (struct filename *fn)
 static int
 process_compile (struct filename *fn)
 {
-	char buff[COB_MEDIUM_BUFF];
+	char *buff;
 	char name[COB_MEDIUM_BUFF];
+	int format_string_length;
+        int buffer_size;
+	int return_code;
 
 	if (output_name) {
 		strcpy (name, output_name);
@@ -1847,16 +1850,47 @@ process_compile (struct filename *fn)
 #endif
 	}
 #ifdef _MSC_VER
-	sprintf (buff, gflag_set ?
+	format_string_length = strlen(gflag_set ?
+		" /c   /Od /MDd /Zi /FR /c /Fa\"\" /Fo\"\" " :
+		" /c   /MD /c /Fa\"\" /Fo\"\" ");
+
+	buffer_size =
+		format_string_length +
+		strlen(cob_cc) +
+		strlen(cob_cflags) +
+		strlen(cob_define_flags) +
+		strlen(name) +
+		strlen(name) +
+		strlen(fn->translate) + 1;
+
+	buff = malloc(buffer_size);
+        
+        .sprintf (buff, gflag_set ?
 		"%s /c %s %s /Od /MDd /Zi /FR /c /Fa\"%s\" /Fo\"%s\" %s" :
 		"%s /c %s %s /MD /c /Fa\"%s\" /Fo\"%s\" %s",
 			cob_cc, cob_cflags, cob_define_flags, name,
 			name, fn->translate);
 #else
+        format_string_length = strlen("  -S -o \"\"   ");
+
+	buffer_size =
+		format_string_length +
+		strlen(cob_cc) +
+		strlen(gccpipe) +
+		strlen(name) +
+		strlen(cob_cflags) +
+		strlen(cob_define_flags) +
+		strlen(fn->translate) + 1;
+
+	buff = malloc(buffer_size);
+
 	sprintf (buff, "%s %s -S -o \"%s\" %s %s %s", cob_cc, gccpipe, name,
 			cob_cflags, cob_define_flags, fn->translate);
 #endif
-	return process (buff);
+	return_code = process (buff);
+
+	free(buff);
+	return return_code;
 }
 
 /* Create single-element assembled object */
@@ -1891,8 +1925,11 @@ static int
 process_module_direct (struct filename *fn)
 {
 	int	ret;
-	char	buff[COB_MEDIUM_BUFF];
+	char	*buff;
 	char	name[COB_MEDIUM_BUFF];
+        int format_string_length;
+	int buffer_size;
+	int return_code;
 
 	if (output_name) {
 		strcpy (name, output_name);
@@ -1914,6 +1951,21 @@ process_module_direct (struct filename *fn)
 
 
 #ifdef _MSC_VER
+        format_string_length = strlen(gflag_set ?
+		" /c   /Od /MDd /Zi /FR /c /Fa\"\" /Fo\"\" " :
+		" /c   /MD /c /Fa\"\" /Fo\"\" ");
+
+	buffer_size =
+		format_string_length +
+		strlen(cob_cc) +
+		strlen(cob_cflags) +
+		strlen(cob_define_flags) +
+		strlen(name) +
+		strlen(name) +
+		strlen(fn->translate) + 1;
+
+	buff = malloc(buffer_size);
+
 	sprintf (buff, gflag_set ?
 		"%s %s %s /Od /MDd /LDd /Zi /FR /Fe\"%s\" /Fo\"%s\" %s \"%s\" %s %s" :
 		"%s %s %s /MD /LD /Fe\"%s\" /Fo\"%s\" %s \"%s\" %s %s",
@@ -1936,6 +1988,19 @@ process_module_direct (struct filename *fn)
 	sprintf (buff, "%s.lib", name);
 	cobc_check_action (buff);
 #else	/* _MSC_VER */
+        format_string_length = strlen("  -S -o \"\"   ");
+
+	buffer_size =
+		format_string_length +
+		strlen(cob_cc) +
+		strlen(gccpipe) +
+		strlen(name) +
+		strlen(cob_cflags) +
+		strlen(cob_define_flags) +
+		strlen(fn->translate) + 1;
+
+	buff = malloc(buffer_size);
+
 	sprintf (buff, "%s %s %s %s %s %s %s %s -o %s %s %s",
 		 cob_cc, gccpipe, cob_cflags, cob_define_flags, COB_SHARED_OPT,
 		 cob_ldflags, COB_PIC_FLAGS, COB_EXPORT_DYN, name,
@@ -1948,7 +2013,10 @@ process_module_direct (struct filename *fn)
 	}
 #endif
 #endif	/* _MSC_VER */
-	return ret;
+	return_code = process (buff);
+
+	free(buff);
+	return return_code;
 }
 
 /* Create single-element loadable object */
@@ -1957,8 +2025,11 @@ static int
 process_module (struct filename *fn)
 {
 	int	ret;
-	char	buff[COB_MEDIUM_BUFF];
+	char	*buff;
 	char	name[COB_MEDIUM_BUFF];
+        int format_string_length;
+	int buffer_size;
+	int return_code;
 
 	if (output_name) {
 		strcpy (name, output_name);
@@ -1978,6 +2049,21 @@ process_module (struct filename *fn)
 #endif
 	}
 #ifdef _MSC_VER
+        format_string_length = strlen(gflag_set ?
+		" /c   /Od /MDd /Zi /FR /c /Fa\"\" /Fo\"\" " :
+		" /c   /MD /c /Fa\"\" /Fo\"\" ");
+
+	buffer_size =
+		format_string_length +
+		strlen(cob_cc) +
+		strlen(cob_cflags) +
+		strlen(cob_define_flags) +
+		strlen(name) +
+		strlen(name) +
+		strlen(fn->translate) + 1;
+
+	buff = malloc(buffer_size);
+
 	sprintf (buff, gflag_set ?
 		"%s /Od /MDd /LDd /Zi /FR /Fe\"%s\" %s \"%s\" %s" :
 		"%s /MD /LD /Fe\"%s\" %s \"%s\" %s",
@@ -1999,6 +2085,19 @@ process_module (struct filename *fn)
 	sprintf (buff, "%s.lib", name);
 	cobc_check_action (buff);
 #else	/* _MSC_VER */
+        format_string_length = strlen("  -S -o \"\"   ");
+
+	buffer_size =
+		format_string_length +
+		strlen(cob_cc) +
+		strlen(gccpipe) +
+		strlen(name) +
+		strlen(cob_cflags) +
+		strlen(cob_define_flags) +
+		strlen(fn->translate) + 1;
+
+	buff = malloc(buffer_size);
+
 	sprintf (buff, "%s %s %s %s %s %s -o %s %s %s",
 		 cob_cc, gccpipe, COB_SHARED_OPT, cob_ldflags, COB_PIC_FLAGS,
 		 COB_EXPORT_DYN, name, fn->object, cob_libs);
@@ -2010,7 +2109,10 @@ process_module (struct filename *fn)
 	}
 #endif
 #endif	/* _MSC_VER */
-	return ret;
+	return_code = process (buff);
+
+	free(buff);
+	return return_code;
 }
 
 static int
@@ -2021,9 +2123,12 @@ process_library (struct filename *l)
 	struct filename	*f;
 	size_t		bufflen;
 	int		ret;
-	char		buff[COB_MEDIUM_BUFF];
+	char		*buff;
 	char		name[COB_MEDIUM_BUFF];
 	char		objs[COB_MEDIUM_BUFF] = "\0";
+        int format_string_length;
+	int buffer_size;
+	int return_code;
 
 	bufflen = 0;
 	for (f = l; f; f = f->next) {
@@ -2074,6 +2179,21 @@ process_library (struct filename *l)
 	}
 
 #ifdef _MSC_VER
+        format_string_length = strlen(gflag_set ?
+		" /c   /Od /MDd /Zi /FR /c /Fa\"\" /Fo\"\" " :
+		" /c   /MD /c /Fa\"\" /Fo\"\" ");
+
+	buffer_size =
+		format_string_length +
+		strlen(cob_cc) +
+		strlen(cob_cflags) +
+		strlen(cob_define_flags) +
+		strlen(name) +
+		strlen(name) +
+		strlen(fn->translate) + 1;
+
+	buff = malloc(buffer_size);
+
 	sprintf (buff, gflag_set ?
 		"%s /Od /MDd /LDd /Zi /FR /Fe\"%s\" %s %s %s" :
 		"%s /MD /LD /Fe\"%s\" %s %s %s",
@@ -2095,6 +2215,19 @@ process_library (struct filename *l)
 	sprintf (buff, "%s.lib", name);
 	cobc_check_action (buff);
 #else	/* _MSC_VER */
+        format_string_length = strlen("  -S -o \"\"   ");
+
+	buffer_size =
+		format_string_length +
+		strlen(cob_cc) +
+		strlen(gccpipe) +
+		strlen(name) +
+		strlen(cob_cflags) +
+		strlen(cob_define_flags) +
+                strlen(f->translate) + 1;
+
+	buff = malloc(buffer_size);
+
 	sprintf (buffptr, "%s %s %s %s %s %s -o %s %s %s",
 		 cob_cc, gccpipe, COB_SHARED_OPT, cob_ldflags, COB_PIC_FLAGS,
 		 COB_EXPORT_DYN, name, objsptr, cob_libs);
@@ -2106,7 +2239,10 @@ process_library (struct filename *l)
 	}
 #endif
 #endif	/* _MSC_VER */
-	return ret;
+	return_code = process (buff);
+
+	free(buff);
+	return return_code;
 }
 
 static int
@@ -2117,9 +2253,12 @@ process_link (struct filename *l)
 	struct filename	*f;
 	size_t		bufflen;
 	int		ret;
-	char		buff[COB_MEDIUM_BUFF];
+	char		*buff;
 	char		name[COB_MEDIUM_BUFF];
 	char		objs[COB_MEDIUM_BUFF] = "\0";
+        int format_string_length;
+	int buffer_size;
+	int return_code;
 
 	bufflen = 0;
 	for (f = l; f; f = f->next) {
@@ -2159,6 +2298,21 @@ process_link (struct filename *l)
 		buffptr = buff;
 	}
 #ifdef _MSC_VER
+        format_string_length = strlen(gflag_set ?
+		" /c   /Od /MDd /Zi /FR /c /Fa\"\" /Fo\"\" " :
+		" /c   /MD /c /Fa\"\" /Fo\"\" ");
+
+	buffer_size =
+		format_string_length +
+		strlen(cob_cc) +
+		strlen(cob_cflags) +
+		strlen(cob_define_flags) +
+		strlen(name) +
+		strlen(name) +
+		strlen(fn->translate) + 1;
+
+	buff = malloc(buffer_size);
+
 	sprintf (buff, gflag_set ?
 		"%s /Od /MDd /Zi /FR /Fe\"%s\" %s %s %s %s" :
 		"%s /MD /Fe\"%s\" %s %s %s %s",
@@ -2176,6 +2330,19 @@ process_link (struct filename *l)
 	}
 #endif
 #else	/* _MSC_VER */
+        format_string_length = strlen("  -S -o \"\"   ");
+
+	buffer_size =
+		format_string_length +
+		strlen(cob_cc) +
+		strlen(gccpipe) +
+		strlen(name) +
+		strlen(cob_cflags) +
+		strlen(cob_define_flags) +
+                strlen(f->translate) + 1;
+
+	buff = malloc(buffer_size);
+
 	sprintf (buffptr, "%s %s %s %s -o %s %s %s",
 		 cob_cc, gccpipe, cob_ldflags, COB_EXPORT_DYN, name,
 		 objsptr, cob_libs);
@@ -2194,7 +2361,10 @@ process_link (struct filename *l)
 	}
 #endif
 #endif	/* _MSC_VER */
-	return ret;
+	return_code = process (buff);
+
+	free(buff);
+	return return_code;
 }
 
 int
