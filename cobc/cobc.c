@@ -1856,7 +1856,7 @@ process_compile (struct filename *fn)
 
 	buffer_size =
 		format_string_length +
-		strlen(cobcc) +
+		strlen(cob_cc) +
 		strlen(cob_cflags) +
 		strlen(cob_define_flags) +
 		strlen(name) +
