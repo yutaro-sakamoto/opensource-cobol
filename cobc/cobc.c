@@ -240,7 +240,6 @@ static jmp_buf		cob_jmpbuf;
 
 static int		wants_nonfinal = 0;
 static int		cb_flag_module = 0;
-
 static int		cb_flag_library = 0;
 static int		save_temps = 0;
 static int		save_csrc = 0;
@@ -1827,13 +1826,16 @@ process_translate (struct filename *fn)
 		fclose (q->local_storage_file);
 	}
 	return 0;
-} 
+}
 
 static int
 process_compile (struct filename *fn)
 {
-	char buff[COB_MEDIUM_BUFF];
+	char *buff;
 	char name[COB_MEDIUM_BUFF];
+	int format_string_length;
+	int buffer_size;
+	int return_code;
 
 	if (output_name) {
 		strcpy (name, output_name);
@@ -1847,16 +1849,48 @@ process_compile (struct filename *fn)
 #endif
 	}
 #ifdef _MSC_VER
+
+	format_string_length = strlen(gflag_set ?
+		" /c   /Od /MDd /Zi /FR /c /Fa\"\" /Fo\"\" " :
+		" /c   /MD /c /Fa\"\" /Fo\"\" ");
+
+	buffer_size =
+		format_string_length +
+		strlen(cobcc) +
+		strlen(cob_cflags) +
+		strlen(cob_define_flags) +
+		strlen(name) +
+		strlen(name) +
+		strlen(fn->translate) + 1;
+
+	buff = malloc(buffer_size);
+
 	sprintf (buff, gflag_set ?
 		"%s /c %s %s /Od /MDd /Zi /FR /c /Fa\"%s\" /Fo\"%s\" %s" :
 		"%s /c %s %s /MD /c /Fa\"%s\" /Fo\"%s\" %s",
 			cob_cc, cob_cflags, cob_define_flags, name,
 			name, fn->translate);
 #else
+	format_string_length = strlen("  -S -o \"\"   ");
+
+	buffer_size =
+		format_string_length +
+		strlen(cob_cc) +
+		strlen(gccpipe) +
+		strlen(name) +
+		strlen(cob_cflags) +
+		strlen(cob_define_flags) +
+		strlen(fn->translate) + 1;
+
+	buff = malloc(buffer_size);
+
 	sprintf (buff, "%s %s -S -o \"%s\" %s %s %s", cob_cc, gccpipe, name,
 			cob_cflags, cob_define_flags, fn->translate);
 #endif
-	return process (buff);
+	return_code = process (buff);
+
+	free(buff);
+	return return_code;
 }
 
 /* Create single-element assembled object */
