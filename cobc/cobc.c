@@ -1834,9 +1834,9 @@ process_compile (struct filename *fn)
 {
 	char *buff;
 	char name[COB_MEDIUM_BUFF];
-	int format_string_length;
-        int buffer_size;
-	int return_code;
+	int  format_string_length;
+        int  buffer_size;
+	int  return_code;
 
 	if (output_name) {
 		strcpy (name, output_name);
@@ -1927,9 +1927,9 @@ process_module_direct (struct filename *fn)
 	int	ret;
 	char	*buff;
 	char	name[COB_MEDIUM_BUFF];
-        int format_string_length;
-	int buffer_size;
-	int return_code;
+        int     format_string_length;
+	int     buffer_size;
+	int     return_code;
 
 	if (output_name) {
 		strcpy (name, output_name);
@@ -1952,8 +1952,8 @@ process_module_direct (struct filename *fn)
 
 #ifdef _MSC_VER
         format_string_length = strlen(gflag_set ?
-		" /Od /MDd /LDd /Zi /FR /Fe\"\" /Fo\"\"\"\" " :
-		" /MD /LD /Fe\"\" /Fo\"\"\"\" ");
+		"   /Od /MDd /LDd /Zi /FR /Fe\" \" /Fo\" \"   \" \"    " :
+		"   /MD /LD /Fe\" \" /Fo\" \"   \" \"  ");
 
 	buffer_size =
 		format_string_length +
@@ -1962,7 +1962,10 @@ process_module_direct (struct filename *fn)
 		strlen(cob_define_flags) +
 		strlen(name) +
 		strlen(name) +
-		strlen(fn->translate) + 1;
+		strlen(cob_ldflags) +
+	        strlen(fn->translate) +
+	        strlen(cob_libs) +
+	        strlen(manilink) + 1;	
 
 	buff = malloc(buffer_size);
 
@@ -1988,16 +1991,21 @@ process_module_direct (struct filename *fn)
 	sprintf (buff, "%s.lib", name);
 	cobc_check_action (buff);
 #else	/* _MSC_VER */
-        format_string_length = strlen("  -S -o \"\"   ");
+        format_string_length = strlen("       -o   ");
 
 	buffer_size =
 		format_string_length +
 		strlen(cob_cc) +
 		strlen(gccpipe) +
-		strlen(name) +
 		strlen(cob_cflags) +
 		strlen(cob_define_flags) +
-		strlen(fn->translate) + 1;
+		strlen(COB_SHARED_OPT) +
+		strlen(cob_ldflags) +
+		strlen(COB_PIC_FLAGS) +
+		strlen(COB_EXPORT_DYN) +
+		strlen(name) +
+		strlen(fn->translate) +
+		strlen(cob_libs) +1;
 
 	buff = malloc(buffer_size);
 
@@ -2027,9 +2035,9 @@ process_module (struct filename *fn)
 	int	ret;
 	char	*buff;
 	char	name[COB_MEDIUM_BUFF];
-        int format_string_length;
-	int buffer_size;
-	int return_code;
+        int     format_string_length;
+	int     buffer_size;
+	int     return_code;
 
 	if (output_name) {
 		strcpy (name, output_name);
@@ -2050,17 +2058,16 @@ process_module (struct filename *fn)
 	}
 #ifdef _MSC_VER
         format_string_length = strlen(gflag_set ?
-		" /Od /MDd /LDd /Zi /FR /Fe\"\"\"\" " :
-		" /MD /LD /Fe\"\"\"\" ");
+		"  /Od /MDd /LDd /Zi /FR /Fe\" \"   \" \" " :
+		" /MD /LD /Fe\" \"   \" \" ");
 
 	buffer_size =
 		format_string_length +
 		strlen(cob_cc) +
-		strlen(cob_cflags) +
-		strlen(cob_define_flags) +
 		strlen(name) +
-		strlen(name) +
-		strlen(fn->translate) + 1;
+		strlen(cob_ldflags) +
+		strlen(fn->object) +
+		strlen(cob_libs) + 1;
 
 	buff = malloc(buffer_size);
 
@@ -2085,16 +2092,19 @@ process_module (struct filename *fn)
 	sprintf (buff, "%s.lib", name);
 	cobc_check_action (buff);
 #else	/* _MSC_VER */
-        format_string_length = strlen("  -S -o \"\"   ");
+        format_string_length = strlen("     -o   ");
 
 	buffer_size =
 		format_string_length +
 		strlen(cob_cc) +
 		strlen(gccpipe) +
+		strlen(COB_SHARED_OPT) +
+		strlen(cob_ldflags) +
+		strlen(COB_PIC_FLAGS) +
+		strlen(COB_EXPORT_DYN) +
 		strlen(name) +
-		strlen(cob_cflags) +
-		strlen(cob_define_flags) +
-		strlen(fn->translate) + 1;
+		strlen(fn->object) +
+		strlen(cob_libs) + 1;
 
 	buff = malloc(buffer_size);
 
@@ -2126,9 +2136,9 @@ process_library (struct filename *l)
 	char		*buff;
 	char		name[COB_MEDIUM_BUFF];
 	char		objs[COB_MEDIUM_BUFF] = "\0";
-        int format_string_length;
-	int buffer_size;
-	int return_code;
+        int             format_string_length;
+	int             buffer_size;
+	int             return_code;
 
 	bufflen = 0;
 	for (f = l; f; f = f->next) {
@@ -2180,17 +2190,16 @@ process_library (struct filename *l)
 
 #ifdef _MSC_VER
         format_string_length = strlen(gflag_set ?
-		" /Od /MDd /LDd /Zi /FR /Fe\"\" " :
-		" /MD /LD /Fe\"\" ");
+		"  /Od /MDd /LDd /Zi /FR /Fe\" \"   " :
+		"  /MD /LD /Fe\" \"   ");
 
 	buffer_size =
 		format_string_length +
 		strlen(cob_cc) +
-		strlen(cob_cflags) +
-		strlen(cob_define_flags) +
 		strlen(name) +
-		strlen(name) +
-		strlen(fn->translate) + 1;
+		strlen(cob_ldflags) +
+		strlen(objsptr.) +
+		strlen(cob_libs) + 1;
 
 	buff = malloc(buffer_size);
 
@@ -2215,23 +2224,26 @@ process_library (struct filename *l)
 	sprintf (buff, "%s.lib", name);
 	cobc_check_action (buff);
 #else	/* _MSC_VER */
-        format_string_length = strlen("  -S -o \"\"   ");
+        format_string_length = strlen("    -o   ");
 
 	buffer_size =
 		format_string_length +
 		strlen(cob_cc) +
 		strlen(gccpipe) +
+		strlen(COB_SHARED_OPT) +
+		strlen(cob_ldflags) +
+		strlen(COB_PIC_FLAGS) +
+		strlen(COB_EXPORT_DYN) +
 		strlen(name) +
-		strlen(cob_cflags) +
-		strlen(cob_define_flags) +
-                strlen(f->translate) + 1;
+                strlen(objsptr) +
+                strlen(cob_libs) + 1;
 
 	buff = malloc(buffer_size);
 
 	sprintf (buffptr, "%s %s %s %s %s %s -o %s %s %s",
 		 cob_cc, gccpipe, COB_SHARED_OPT, cob_ldflags, COB_PIC_FLAGS,
 		 COB_EXPORT_DYN, name, objsptr, cob_libs);
-	ret = process (buffptr);
+	ret = process (buff);
 #ifdef	COB_STRIP_CMD
 	if (strip_output && ret == 0) {
 		sprintf (buff, "%s %s", COB_STRIP_CMD, name);
@@ -2256,9 +2268,9 @@ process_link (struct filename *l)
 	char		*buff;
 	char		name[COB_MEDIUM_BUFF];
 	char		objs[COB_MEDIUM_BUFF] = "\0";
-        int format_string_length;
-	int buffer_size;
-	int return_code;
+        int             format_string_length;
+	int             buffer_size;
+	int             return_code;
 
 	bufflen = 0;
 	for (f = l; f; f = f->next) {
@@ -2299,19 +2311,19 @@ process_link (struct filename *l)
 	}
 #ifdef _MSC_VER
         format_string_length = strlen(gflag_set ?
-		" /Od /MDd /Zi /FR /Fe\"\" " :
-		" /MD /Fe\"\" ");
+		"  /Od /MDd /Zi /FR /Fe\" \"    " :
+		"  /MD /Fe\" \"    ");
 
 	buffer_size =
 		format_string_length +
 		strlen(cob_cc) +
-		strlen(cob_cflags) +
-		strlen(cob_define_flags) +
 		strlen(name) +
-		strlen(name) +
-		strlen(fn->translate) + 1;
+		strlen(cob_ldflags) +
+		strlen(objsptr) +
+		strlen(cob_libs) +
+		strlen(manilink) + 1;
 
-	buff = malloc(buffer_size);
+	buffptr = malloc(buffer_size);
 
 	sprintf (buff, gflag_set ?
 		"%s /Od /MDd /Zi /FR /Fe\"%s\" %s %s %s %s" :
@@ -2330,24 +2342,25 @@ process_link (struct filename *l)
 	}
 #endif
 #else	/* _MSC_VER */
-        format_string_length = strlen("  -S -o \"\"   ");
+        format_string_length = strlen("    -o   ");
 
 	buffer_size =
 		format_string_length +
 		strlen(cob_cc) +
 		strlen(gccpipe) +
+		strlen(cob_ldflags) +
+		strlen(COB_EXPORT_DYN) +
 		strlen(name) +
-		strlen(cob_cflags) +
-		strlen(cob_define_flags) +
-                strlen(f->translate) + 1;
+		strlen(objsptr) +
+                strlen(cob_libs) + 1;
 
-	buff = malloc(buffer_size);
+	buff  = malloc(buffer_size);
 
 	sprintf (buffptr, "%s %s %s %s -o %s %s %s",
 		 cob_cc, gccpipe, cob_ldflags, COB_EXPORT_DYN, name,
 		 objsptr, cob_libs);
 
-	ret = process (buffptr);
+	ret = process (buff);
 #ifdef	__hpux
 	if (ret == 0) {
 		sprintf (buff, "chatr -s +s enable %s%s 1>/dev/null 2>&1", name, COB_EXEEXT);
