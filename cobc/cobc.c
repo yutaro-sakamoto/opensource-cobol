@@ -1991,7 +1991,7 @@ process_module_direct (struct filename *fn)
 	sprintf (buff, "%s.lib", name);
 	cobc_check_action (buff);
 #else	/* _MSC_VER */
-        format_string_length = strlen(" -o  ");
+        format_string_length = strlen("       -o   ");
 
 	buffer_size =
 		format_string_length +
@@ -2058,8 +2058,8 @@ process_module (struct filename *fn)
 	}
 #ifdef _MSC_VER
         format_string_length = strlen(gflag_set ?
-		" /Od /MDd /LDd /Zi /FR /Fe\"\"  \"\" " :
-		" /MD /LD /Fe\"\"  \"\" ");
+		"   /Od /MDd /LDd /Zi /FR /Fe\"\" /Fo\"\"  \"\"  " :
+		"   /MD /LD /Fe\"\" /Fo\"\"  \"\"  ");
 
 	buffer_size =
 		format_string_length +
@@ -2092,7 +2092,7 @@ process_module (struct filename *fn)
 	sprintf (buff, "%s.lib", name);
 	cobc_check_action (buff);
 #else	/* _MSC_VER */
-        format_string_length = strlen("     -o   ");
+        format_string_length = strlen(" -o ");
 
 	buffer_size =
 		format_string_length +
