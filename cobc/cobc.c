@@ -2238,7 +2238,7 @@ process_library (struct filename *l)
                 strlen(objsptr) +
                 strlen(cob_libs) + 1;
 
-	buff = malloc(buffer_size);
+	buffptr = malloc(buffer_size);
 
 	sprintf (buffptr, "%s %s %s %s %s %s -o %s %s %s",
 		 cob_cc, gccpipe, COB_SHARED_OPT, cob_ldflags, COB_PIC_FLAGS,
@@ -2253,7 +2253,7 @@ process_library (struct filename *l)
 #endif	/* _MSC_VER */
 	return_code = process (buff);
 
-        free(buff);
+        free(buffptr);
 	return return_code;
 }
 
@@ -2374,7 +2374,7 @@ process_link (struct filename *l)
 	}
 #endif
 #endif	/* _MSC_VER */
-	return_code = process (buff);
+	return_code = process (buffptr);
 
 	free(buff);
 	return return_code;
