@@ -433,9 +433,9 @@ _strndup (char *src, int size)
 void
 cb_constant_list_add (char *buff)
 {
-	struct      cb_constant_list *p;
-	struct      cb_constant_list *l;
-	char	    *s1, *s2;
+        struct cb_constant_list *p;		
+	struct cb_constant_list *l;		
+	char	*s1, *s2;	
 
 	p = cobc_malloc (sizeof (struct cb_constant_list));
 
@@ -725,10 +725,10 @@ cobc_check_action (const char *name)
 static void
 cobc_clean_up (int status)
 {
-	struct filename		    *fn;
-	struct local_filename	    *lf;
-	int			    i;
-	char			    buff[COB_SMALL_BUFF];
+	struct filename		*fn;		
+	struct local_filename	*lf;		
+	int		        i;
+	char			buff[COB_SMALL_BUFF];
 
 	if (cb_listing_file) {
 		fclose (cb_listing_file);
@@ -916,11 +916,11 @@ cobc_options_error (void)
 static int
 process_command_line (const int argc, char *argv[])
 {
-	int			   c, idx;
-	int 		           argnum;
-	enum cob_exception_id	   i;
-	struct stat		   st;
-	char			   ext[COB_MINI_BUFF];
+	int			c, idx;	
+	int 		argnum;		 		           
+	enum cob_exception_id	i;		
+	struct stat		st;				   
+	char			ext[COB_MINI_BUFF];
 
 	/* Enable default I/O exceptions */
 	CB_EXCEPTION_ENABLE (COB_EC_I_O) = 1;
@@ -1307,8 +1307,8 @@ process_command_line (const int argc, char *argv[])
 static void
 process_env_copy_path (void)
 {
-	char	      *value;
-	char	      *token;
+	char	*value;
+	char	*token;
 
 	cobcpy = getenv ("COBCPY");
 	if (cobcpy == NULL || strlen (cobcpy) == 0) {
@@ -1354,9 +1354,9 @@ file_stripext (char *buff)
 static void
 file_basename (const char *filename, char *buff)
 {
-	const char	      *startp;
-	const char	      *endp;
-	size_t		      len;
+	const char	*startp;
+	const char	*endp;
+	size_t		len;
 
 	/* Remove directory name */
 	startp = strrchr (filename, '/');
@@ -1394,9 +1394,9 @@ file_extension (const char *filename)
 static char *
 cobc_temp_name (const char *ext)
 {
-	char	      buff[COB_MEDIUM_BUFF];
+	char buff[COB_MEDIUM_BUFF];
 #ifdef _WIN32
-	char	      temp[MAX_PATH];
+	char temp[MAX_PATH];
 
 	GetTempPath (MAX_PATH, temp);
 	GetTempFileName (temp, "cob", 0, buff);
@@ -1411,12 +1411,12 @@ cobc_temp_name (const char *ext)
 
 static struct filename *
 process_filename (const char *filename)
-{
-	const char	      *extension;
-	struct filename	      *fn;
-	struct filename	      *ffn;
-	struct stat	      st;
-	char		      basename[COB_SMALL_BUFF];
+{ 
+	const char	*extension;
+	struct filename	*fn;
+	struct filename	*ffn;
+	struct stat	st;
+	char		basename[COB_SMALL_BUFF];
 
 	if (stat (filename, &st) != 0) {
 		cobc_terminate (filename);
@@ -1536,11 +1536,11 @@ process_filename (const char *filename)
 static int
 process (const char *cmd)
 {
-	char	      *p;
-	char	      *buffptr;
-	size_t	      clen;
-	int	      ret;
-	char	      buff[COB_MEDIUM_BUFF];
+	char	    *p;
+	char	    *buffptr;
+	size_t	    clen;
+	int	    ret;
+	char	    buff[COB_MEDIUM_BUFF];
 
 	if (strchr (cmd, '$') == NULL) {
 		if (verbose_output) {
@@ -1580,9 +1580,9 @@ process (const char *cmd)
 static int
 preprocess (struct filename *fn)
 {
-	struct cb_text_list	     *l;
-	int			     i;
-	char			     line[COB_MEDIUM_BUFF];
+	struct cb_text_list	*l;
+	int			i;
+	char			line[COB_MEDIUM_BUFF];
 
 	errorcount = 0;
 
@@ -1697,8 +1697,8 @@ preprocess (struct filename *fn)
 static struct cb_program *
 program_list_reverse (struct cb_program *p)
 {
-	struct cb_program	      *next;
-	struct cb_program	      *last = NULL;
+	struct cb_program	*next;
+	struct cb_program	*last = NULL;
 
 	for (; p; p = next) {
 		next = p->next_program;
@@ -1711,14 +1711,14 @@ program_list_reverse (struct cb_program *p)
 static int
 process_translate (struct filename *fn)
 {
-	struct cb_program	      *p;
-	struct cb_program	      *q;
-	struct cb_program	      *r;
-	struct handler_struct	      *hstr1;
-	struct handler_struct	      *hstr2;
-	struct local_filename	      *lf;
-	int			      ret;
-	int			      i;
+	struct cb_program	   *p;
+	struct cb_program	   *q;
+	struct cb_program	   *r;
+	struct handler_struct	   *hstr1;
+	struct handler_struct	   *hstr2;
+	struct local_filename	   *lf;
+	int			   ret;
+	int			   i;
 
 	/* initialize */
 	cb_source_file = NULL;
@@ -1832,11 +1832,11 @@ process_translate (struct filename *fn)
 static int
 process_compile (struct filename *fn)
 {
-	char       *buff;
-	char       name[COB_MEDIUM_BUFF];
-	int        format_string_length;
-        int        buffer_size;
-	int        return_code;
+	char *buff;
+	char name[COB_MEDIUM_BUFF];
+	int  format_string_length;
+        int  buffer_size;
+	int  return_code;
 
 	if (output_name) {
 		strcpy (name, output_name);
@@ -1898,7 +1898,7 @@ process_compile (struct filename *fn)
 static int
 process_assemble (struct filename *fn)
 {
-	char       buff[COB_MEDIUM_BUFF];
+	char buff[COB_MEDIUM_BUFF];
 
 #ifdef _MSC_VER
 	sprintf (buff, gflag_set ?
@@ -1924,12 +1924,12 @@ process_assemble (struct filename *fn)
 static int
 process_module_direct (struct filename *fn)
 {
-	int	      ret;
-	char	      *buff;
-	char	      name[COB_MEDIUM_BUFF];
-        int           format_string_length;
-	int           buffer_size;
-	int           return_code;
+	int	ret;
+	char	*buff;
+	char	name[COB_MEDIUM_BUFF];
+        int     format_string_length;
+	int     buffer_size;
+	int     return_code;
 
 	if (output_name) {
 		strcpy (name, output_name);
@@ -2032,12 +2032,12 @@ process_module_direct (struct filename *fn)
 static int
 process_module (struct filename *fn)
 {
-	int	      ret;
-	char	      *buff;
-	char	      name[COB_MEDIUM_BUFF];
-        int           format_string_length;
-	int           buffer_size;
-	int           return_code;
+	int	ret;
+	char	*buff;
+	char	name[COB_MEDIUM_BUFF];
+        int     format_string_length;
+	int     buffer_size;
+	int     return_code;
 
 	if (output_name) {
 		strcpy (name, output_name);
@@ -2092,7 +2092,7 @@ process_module (struct filename *fn)
 	sprintf (buff, "%s.lib", name);
 	cobc_check_action (buff);
 #else	/* _MSC_VER */
-        format_string_length = strlen(" -o ");
+        format_string_length = strlen("    -o   ");
 
 	buffer_size =
 		format_string_length +
@@ -2128,17 +2128,17 @@ process_module (struct filename *fn)
 static int
 process_library (struct filename *l)
 {
-	char		      *buffptr;
-	char		      *objsptr;
-	struct filename	      *f;
-	size_t		      bufflen;
-	int		      ret;
-	char		      *buff;
-	char		      name[COB_MEDIUM_BUFF];
-	char		      objs[COB_MEDIUM_BUFF] = "\0";
-        int                   format_string_length;
-	int                   buffer_size;
-	int                   return_code;
+	char		*buffptr;
+	char		*objsptr;
+	struct filename	*f;
+	size_t		bufflen;
+	int		ret;
+	char		*buff;
+	char		name[COB_MEDIUM_BUFF];
+	char		objs[COB_MEDIUM_BUFF] = "\0";
+        int             format_string_length;
+	int             buffer_size;
+	int             return_code;
 
 	bufflen = 0;
 	for (f = l; f; f = f->next) {
@@ -2260,17 +2260,17 @@ process_library (struct filename *l)
 static int
 process_link (struct filename *l)
 {
-	char		     *buffptr;
-	char		     *objsptr;
-	struct filename	     *f;
-	size_t		     bufflen;
-	int		     ret;
-	char		     *buff;
-	char		     name[COB_MEDIUM_BUFF];
-	char		     objs[COB_MEDIUM_BUFF] = "\0";
-        int                  format_string_length;
-	int                  buffer_size;
-	int                  return_code;
+	char		*buffptr;
+	char		*objsptr;
+	struct filename	*f;
+	size_t		bufflen;
+	int		ret;
+	char		*buff;
+	char		name[COB_MEDIUM_BUFF];
+	char		objs[COB_MEDIUM_BUFF] = "\0";
+        int             format_string_length;
+	int             buffer_size;
+	int             return_code;
 
 	bufflen = 0;
 	for (f = l; f; f = f->next) {
@@ -2383,13 +2383,13 @@ process_link (struct filename *l)
 int
 main (int argc, char *argv[])
 {
-	struct filename		     *fn;
-	char			     *p;
-	int			     status = 1;
-	int			     year;
-	int			     day;
-	char			     month[32];
-	char			     buff[COB_SMALL_BUFF];
+	struct filename		*fn;
+	char			*p;
+	int			status = 1;
+	int			year;
+	int			day;
+	char			month[32];
+	char			buff[COB_SMALL_BUFF];
 
 #ifdef	HAVE_SIGNAL_H
 	if ((intsig = signal (SIGINT, cobc_sig_handler)) == SIG_IGN) {
