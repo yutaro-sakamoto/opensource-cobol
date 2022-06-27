@@ -1865,7 +1865,7 @@ process_compile (struct filename *fn)
 
 	buff = malloc(buffer_size);
         
-        sprintf (buff, gflag_set ?
+        sprintf (buff, gflag_set ?5
 		"%s /c %s %s /Od /MDd /Zi /FR /c /Fa\"%s\" /Fo\"%s\" %s" :
 		"%s /c %s %s /MD /c /Fa\"%s\" /Fo\"%s\" %s",
 			cob_cc, cob_cflags, cob_define_flags, name,
