@@ -1832,11 +1832,11 @@ process_translate (struct filename *fn)
 static int
 process_compile (struct filename *fn)
 {
-	char *buff;
-	char name[COB_MEDIUM_BUFF];
-	int  format_string_length;
-        int  buffer_size;
-	int  return_code;
+	char    *buff;
+	char    name[COB_MEDIUM_BUFF];
+	int     format_string_length;
+        int     buffer_size;
+	int     return_code;
 
 	if (output_name) {
 		strcpy (name, output_name);
@@ -2238,12 +2238,12 @@ process_library (struct filename *l)
                 strlen(objsptr) +
                 strlen(cob_libs) + 1;
 
-	buffptr = malloc(buffer_size);
+	buff = malloc(buffer_size);
 
 	sprintf (buffptr, "%s %s %s %s %s %s -o %s %s %s",
 		 cob_cc, gccpipe, COB_SHARED_OPT, cob_ldflags, COB_PIC_FLAGS,
 		 COB_EXPORT_DYN, name, objsptr, cob_libs);
-	ret = process (buffptr);
+	ret = process (buff);
 #ifdef	COB_STRIP_CMD
 	if (strip_output && ret == 0) {
 		sprintf (buff, "%s %s", COB_STRIP_CMD, name);
@@ -2253,7 +2253,7 @@ process_library (struct filename *l)
 #endif	/* _MSC_VER */
 	return_code = process (buff);
 
-        free(buffptr);
+        free(buff);
 	return return_code;
 }
 
@@ -2354,13 +2354,13 @@ process_link (struct filename *l)
 		strlen(objsptr) +
                 strlen(cob_libs) + 1;
 
-	buffptr  = malloc(buffer_size);
+	buff = malloc(buffer_size);
 
 	sprintf (buffptr, "%s %s %s %s -o %s %s %s",
 		 cob_cc, gccpipe, cob_ldflags, COB_EXPORT_DYN, name,
 		 objsptr, cob_libs);
 
-	ret = process (buffptr);
+	ret = process (buff);
 #ifdef	__hpux
 	if (ret == 0) {
 		sprintf (buff, "chatr -s +s enable %s%s 1>/dev/null 2>&1", name, COB_EXEEXT);
@@ -2374,7 +2374,7 @@ process_link (struct filename *l)
 	}
 #endif
 #endif	/* _MSC_VER */
-	return_code = process (buffptr);
+	return_code = process (buff);
 
 	free(buff);
 	return return_code;
