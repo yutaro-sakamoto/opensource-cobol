@@ -1850,7 +1850,7 @@ process_compile (struct filename *fn)
 #endif
 	}
 #ifdef _MSC_VER
-	format_string_length = strlen(gflag_set?
+	format_string_length = strlen(gflag_set ?
 		" /c   /Od /MDd /Zi /FR /c /Fa\"\" /Fo\"\" " :
 		" /c   /MD /c /Fa\"\" /Fo\"\" ");
 
@@ -1865,7 +1865,7 @@ process_compile (struct filename *fn)
 
 	buff = malloc(buffer_size);
         
-        sprintf (buff, gflag_set?
+        sprintf (buff, gflag_set ?
 		"%s /c %s %s /Od /MDd /Zi /FR /c /Fa\"%s\" /Fo\"%s\" %s" :
 		"%s /c %s %s /MD /c /Fa\"%s\" /Fo\"%s\" %s",
 			cob_cc, cob_cflags, cob_define_flags, name,
@@ -1951,7 +1951,7 @@ process_module_direct (struct filename *fn)
 
 
 #ifdef _MSC_VER
-        format_string_length = strlen(gflag_set?
+        format_string_length = strlen(gflag_set ?
 	    	"   /Od /MDd /LDd /Zi /FR /Fe\"\" /Fo\"\"  \"\"  " :
 		"   /MD /LD /Fe\"\" /Fo\"\"  \"\"  ");
 
@@ -2057,7 +2057,7 @@ process_module (struct filename *fn)
 #endif
 	}
 #ifdef _MSC_VER
-        format_string_length = strlen(gflag_set?
+        format_string_length = strlen(gflag_set ?
 		" /Od /MDd /LDd /Zi /FR /Fe\"\"  \"\" " :
 		" /MD /LD /Fe\"\"  \"\" ");
 
@@ -2071,7 +2071,7 @@ process_module (struct filename *fn)
 
 	buff = malloc(buffer_size);
 
-	sprintf (buff, gflag_set?
+	sprintf (buff, gflag_set ?
 		"%s /Od /MDd /LDd /Zi /FR /Fe\"%s\" %s \"%s\" %s" :
 		"%s /MD /LD /Fe\"%s\" %s \"%s\" %s",
 			cob_cc, name, cob_ldflags, fn->object, cob_libs);
@@ -2189,7 +2189,7 @@ process_library (struct filename *l)
 	}
 
 #ifdef _MSC_VER
-        format_string_length = strlen(gflag_set?
+        format_string_length = strlen(gflag_set ?
 		"  /Od /MDd /LDd /Zi /FR /Fe\" \"   " :
 		"  /MD /LD /Fe\" \"   ");
 
@@ -2203,7 +2203,7 @@ process_library (struct filename *l)
 
 	buff = malloc(buffer_size);
 
-	sprintf (buff, gflag_set?
+	sprintf (buff, gflag_set ?
 		"%s /Od /MDd /LDd /Zi /FR /Fe\"%s\" %s %s %s" :
 		"%s /MD /LD /Fe\"%s\" %s %s %s",
 			cob_cc, name, cob_ldflags, objsptr, cob_libs);
@@ -2252,7 +2252,7 @@ process_library (struct filename *l)
 	}
 #endif
 #endif	/* _MSC_VER */
-	return_code = process (buff);
+	return_code = ret (buff);
 
         free(buff);
 	return return_code;
@@ -2311,7 +2311,7 @@ process_link (struct filename *l)
 		buffptr = buff;
 	}
 #ifdef _MSC_VER
-        format_string_length = strlen(gflag_set?
+        format_string_length = strlen(gflag_set ?
 		"  /Od /MDd /Zi /FR /Fe\" \"    " :
 		"  /MD /Fe\" \"    ");
 
@@ -2326,7 +2326,7 @@ process_link (struct filename *l)
 
 	buff = malloc(buffer_size);
 
-	sprintf (buff, gflag_set?
+	sprintf (buff, gflag_set ?
 		"%s /Od /MDd /Zi /FR /Fe\"%s\" %s %s %s %s" :
 		"%s /MD /Fe\"%s\" %s %s %s %s",
 			cob_cc, name, cob_ldflags, objsptr, cob_libs, manilink);
