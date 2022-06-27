@@ -110,17 +110,18 @@ main (int iargc, char **ppargv)
 		}
 		iloop1++;
 		cbuffer [170] = 0;
-	}
+	
                 for (iloop = 0; iloop < FILE_COUNT; iloop++)
-		{
+		
 			if (iswrite (ihandle [iloop], cbuffer))
 			{
 				printf ("Error %d writing row %d to file %d\n", iserrno, iloop1, iloop);
 				exit (1);
 			}
-			if (iloop1 > atoi (ppargv [1])) {
-				break;
-			}
+		if (iloop1 > atoi (ppargv [1])) 
+		{
+	             break;
+		}
 	}
 	fclose (pshandle);
 /*
