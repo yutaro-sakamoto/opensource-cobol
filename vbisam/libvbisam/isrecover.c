@@ -319,7 +319,6 @@ ircvcommit (char *pcbuffer)
 static int
 ircvdelete (char *pcbuffer)
 {
-	char	*pcrow __attribute__((unused));
 	off_t	trownumber;
 	int	ihandle, ipid;
 
@@ -333,7 +332,6 @@ ircvdelete (char *pcbuffer)
 		return ENOTOPEN;
 	}
 	trownumber = inl_ldquad (pcbuffer + INTSIZE);
-	pcrow = pcbuffer + INTSIZE + QUADSIZE + INTSIZE;
 	isdelrec (ihandle, trownumber);
 	return iserrno;
 }
@@ -397,10 +395,9 @@ ircvfileclose (char *pcbuffer)
 {
 	struct RCV_HDL	*psrcv;
 	int		ihandle, ipid;
-	int             ivarlenflag __attribute__((unused));
 
 	ihandle = inl_ldint (pcbuffer);
-	ivarlenflag = inl_ldint (pcbuffer + INTSIZE);
+	inl_ldint (pcbuffer + INTSIZE);
 	ipid = inl_ldint (psvblogheader->cpid);
 	if (iignore (ipid)) {
 		return 0;
