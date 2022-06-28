@@ -93,6 +93,7 @@ main (int iArgc, char **ppcArgv)
 #else
 		sprintf (cCommand, "rm -f %s; touch %s", cLogfileName, cLogfileName);
 #endif
+		system (cCommand);
 		return (0);
 	}
 	sprintf (cLogfileName, "RECOVER");

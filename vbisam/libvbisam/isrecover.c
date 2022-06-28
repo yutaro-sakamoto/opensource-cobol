@@ -551,7 +551,7 @@ ircvuniqueid (char *pcbuffer)
 	if (tuniqueid != inl_ldquad (psvbfile[ihandle]->sdictnode.cuniqueid)) {
 		return EBADFILE;
 	}
-	extern int isuniqueid (const int ihandle, vbisam_off_t *ptuniqueid);
+        issetunique (ihandle, tuniqueid);
 	return 0;
 }
 
