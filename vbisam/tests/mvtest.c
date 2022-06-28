@@ -56,7 +56,7 @@ main (int iArgc, char **ppcArgv)
 	struct	keydesc
 		sKeydesc;
 	char	cLogfileName [100],
-		cCommand [100];
+		cCommand [213];
 	char	cFileName [] = "IsamTest";
 
 	memset (&sKeydesc, 0, sizeof (sKeydesc));
