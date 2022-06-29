@@ -433,9 +433,9 @@ _strndup (char *src, int size)
 void
 cb_constant_list_add (char *buff)
 {
-	struct cb_constant_list *p;
-	struct cb_constant_list *l;
-	char	*s1, *s2;
+        struct cb_constant_list *p;		
+	struct cb_constant_list *l;		
+	char	*s1, *s2;	
 
 	p = cobc_malloc (sizeof (struct cb_constant_list));
 
@@ -725,9 +725,9 @@ cobc_check_action (const char *name)
 static void
 cobc_clean_up (int status)
 {
-	struct filename		*fn;
-	struct local_filename	*lf;
-	int			i;
+	struct filename		*fn;		
+	struct local_filename	*lf;		
+	int		        i;
 	char			buff[COB_SMALL_BUFF];
 
 	if (cb_listing_file) {
@@ -916,10 +916,10 @@ cobc_options_error (void)
 static int
 process_command_line (const int argc, char *argv[])
 {
-	int			c, idx;
-	int 		argnum;
-	enum cob_exception_id	i;
-	struct stat		st;
+	int			c, idx;	
+	int 		argnum;		 		           
+	enum cob_exception_id	i;		
+	struct stat		st;				   
 	char			ext[COB_MINI_BUFF];
 
 	/* Enable default I/O exceptions */
@@ -1394,9 +1394,9 @@ file_extension (const char *filename)
 static char *
 cobc_temp_name (const char *ext)
 {
-	char	buff[COB_MEDIUM_BUFF];
+	char buff[COB_MEDIUM_BUFF];
 #ifdef _WIN32
-	char	temp[MAX_PATH];
+	char temp[MAX_PATH];
 
 	GetTempPath (MAX_PATH, temp);
 	GetTempFileName (temp, "cob", 0, buff);
@@ -1411,7 +1411,7 @@ cobc_temp_name (const char *ext)
 
 static struct filename *
 process_filename (const char *filename)
-{
+{ 
 	const char	*extension;
 	struct filename	*fn;
 	struct filename	*ffn;
@@ -1536,11 +1536,11 @@ process_filename (const char *filename)
 static int
 process (const char *cmd)
 {
-	char	*p;
-	char	*buffptr;
-	size_t	clen;
-	int	ret;
-	char	buff[COB_MEDIUM_BUFF];
+	char	    *p;
+	char	    *buffptr;
+	size_t	    clen;
+	int	    ret;
+	char	    buff[COB_MEDIUM_BUFF];
 
 	if (strchr (cmd, '$') == NULL) {
 		if (verbose_output) {
@@ -1711,14 +1711,14 @@ program_list_reverse (struct cb_program *p)
 static int
 process_translate (struct filename *fn)
 {
-	struct cb_program	*p;
-	struct cb_program	*q;
-	struct cb_program	*r;
-	struct handler_struct	*hstr1;
-	struct handler_struct	*hstr2;
-	struct local_filename	*lf;
-	int			ret;
-	int			i;
+	struct cb_program	   *p;
+	struct cb_program	   *q;
+	struct cb_program	   *r;
+	struct handler_struct	   *hstr1;
+	struct handler_struct	   *hstr2;
+	struct local_filename	   *lf;
+	int			   ret;
+	int			   i;
 
 	/* initialize */
 	cb_source_file = NULL;
@@ -1832,8 +1832,11 @@ process_translate (struct filename *fn)
 static int
 process_compile (struct filename *fn)
 {
-	char buff[COB_MEDIUM_BUFF];
-	char name[COB_MEDIUM_BUFF];
+	char    *buff;
+	char    name[COB_MEDIUM_BUFF];
+	int     format_string_length;
+        int     buffer_size;
+	int     return_code;
 
 	if (output_name) {
 		strcpy (name, output_name);
@@ -1847,16 +1850,47 @@ process_compile (struct filename *fn)
 #endif
 	}
 #ifdef _MSC_VER
-	sprintf (buff, gflag_set ?
+	format_string_length = strlen(gflag_set ?
+		" /c   /Od /MDd /Zi /FR /c /Fa\"\" /Fo\"\" " :
+		" /c   /MD /c /Fa\"\" /Fo\"\" ");
+
+	buffer_size =
+		format_string_length +
+		strlen(cob_cc) +
+		strlen(cob_cflags) +
+		strlen(cob_define_flags) +
+		strlen(name) +
+		strlen(name) +
+		strlen(fn->translate) + 1;
+
+	buff = malloc(buffer_size);
+        
+        sprintf (buff, gflag_set ?
 		"%s /c %s %s /Od /MDd /Zi /FR /c /Fa\"%s\" /Fo\"%s\" %s" :
 		"%s /c %s %s /MD /c /Fa\"%s\" /Fo\"%s\" %s",
 			cob_cc, cob_cflags, cob_define_flags, name,
 			name, fn->translate);
 #else
+        format_string_length = strlen("  -S -o \"\"   ");
+
+	buffer_size =
+		format_string_length +
+		strlen(cob_cc) +
+		strlen(gccpipe) +
+		strlen(name) +
+		strlen(cob_cflags) +
+		strlen(cob_define_flags) +
+		strlen(fn->translate) + 1;
+
+	buff = malloc(buffer_size);
+
 	sprintf (buff, "%s %s -S -o \"%s\" %s %s %s", cob_cc, gccpipe, name,
 			cob_cflags, cob_define_flags, fn->translate);
 #endif
-	return process (buff);
+	return_code = process (buff);
+
+	free(buff);
+	return return_code;
 }
 
 /* Create single-element assembled object */
@@ -1891,8 +1925,11 @@ static int
 process_module_direct (struct filename *fn)
 {
 	int	ret;
-	char	buff[COB_MEDIUM_BUFF];
+	char	*buff;
 	char	name[COB_MEDIUM_BUFF];
+        int     format_string_length;
+	int     buffer_size;
+	int     return_code;
 
 	if (output_name) {
 		strcpy (name, output_name);
@@ -1914,6 +1951,24 @@ process_module_direct (struct filename *fn)
 
 
 #ifdef _MSC_VER
+        format_string_length = strlen(gflag_set ?
+	    	"   /Od /MDd /LDd /Zi /FR /Fe\"\" /Fo\"\"  \"\"  " :
+		"   /MD /LD /Fe\"\" /Fo\"\"  \"\"  ");
+
+	buffer_size =
+		format_string_length +
+		strlen(cob_cc) +
+		strlen(cob_cflags) +
+		strlen(cob_define_flags) +
+		strlen(name) +
+		strlen(name) +
+		strlen(cob_ldflags) +
+	        strlen(fn->translate) +
+	        strlen(cob_libs) +
+	        strlen(manilink) + 1;	
+
+	buff = malloc(buffer_size);
+
 	sprintf (buff, gflag_set ?
 		"%s %s %s /Od /MDd /LDd /Zi /FR /Fe\"%s\" /Fo\"%s\" %s \"%s\" %s %s" :
 		"%s %s %s /MD /LD /Fe\"%s\" /Fo\"%s\" %s \"%s\" %s %s",
@@ -1936,6 +1991,24 @@ process_module_direct (struct filename *fn)
 	sprintf (buff, "%s.lib", name);
 	cobc_check_action (buff);
 #else	/* _MSC_VER */
+        format_string_length = strlen("       -o   ");
+
+	buffer_size =
+		format_string_length +
+		strlen(cob_cc) +
+		strlen(gccpipe) +
+		strlen(cob_cflags) +
+		strlen(cob_define_flags) +
+		strlen(COB_SHARED_OPT) +
+		strlen(cob_ldflags) +
+		strlen(COB_PIC_FLAGS) +
+		strlen(COB_EXPORT_DYN) +
+		strlen(name) +
+		strlen(fn->translate) +
+		strlen(cob_libs) +1;
+
+	buff = malloc(buffer_size);
+
 	sprintf (buff, "%s %s %s %s %s %s %s %s -o %s %s %s",
 		 cob_cc, gccpipe, cob_cflags, cob_define_flags, COB_SHARED_OPT,
 		 cob_ldflags, COB_PIC_FLAGS, COB_EXPORT_DYN, name,
@@ -1948,7 +2021,10 @@ process_module_direct (struct filename *fn)
 	}
 #endif
 #endif	/* _MSC_VER */
-	return ret;
+	return_code = process (buff);
+
+	free(buff);
+	return return_code;
 }
 
 /* Create single-element loadable object */
@@ -1957,8 +2033,11 @@ static int
 process_module (struct filename *fn)
 {
 	int	ret;
-	char	buff[COB_MEDIUM_BUFF];
+	char	*buff;
 	char	name[COB_MEDIUM_BUFF];
+        int     format_string_length;
+	int     buffer_size;
+	int     return_code;
 
 	if (output_name) {
 		strcpy (name, output_name);
@@ -1978,6 +2057,20 @@ process_module (struct filename *fn)
 #endif
 	}
 #ifdef _MSC_VER
+        format_string_length = strlen(gflag_set ?
+		" /Od /MDd /LDd /Zi /FR /Fe\"\"  \"\" " :
+		" /MD /LD /Fe\"\"  \"\" ");
+
+	buffer_size =
+		format_string_length +
+		strlen(cob_cc) +
+		strlen(name) +
+		strlen(cob_ldflags) +
+		strlen(fn->object) +
+		strlen(cob_libs) + 1;
+
+	buff = malloc(buffer_size);
+
 	sprintf (buff, gflag_set ?
 		"%s /Od /MDd /LDd /Zi /FR /Fe\"%s\" %s \"%s\" %s" :
 		"%s /MD /LD /Fe\"%s\" %s \"%s\" %s",
@@ -1999,6 +2092,22 @@ process_module (struct filename *fn)
 	sprintf (buff, "%s.lib", name);
 	cobc_check_action (buff);
 #else	/* _MSC_VER */
+        format_string_length = strlen("    -o   ");
+
+	buffer_size =
+		format_string_length +
+		strlen(cob_cc) +
+		strlen(gccpipe) +
+		strlen(COB_SHARED_OPT) +
+		strlen(cob_ldflags) +
+		strlen(COB_PIC_FLAGS) +
+		strlen(COB_EXPORT_DYN) +
+		strlen(name) +
+		strlen(fn->object) +
+		strlen(cob_libs) + 1;
+
+	buff = malloc(buffer_size);
+
 	sprintf (buff, "%s %s %s %s %s %s -o %s %s %s",
 		 cob_cc, gccpipe, COB_SHARED_OPT, cob_ldflags, COB_PIC_FLAGS,
 		 COB_EXPORT_DYN, name, fn->object, cob_libs);
@@ -2010,20 +2119,26 @@ process_module (struct filename *fn)
 	}
 #endif
 #endif	/* _MSC_VER */
-	return ret;
+	return_code = process (buff);
+
+	free(buff);
+	return return_code;
 }
 
 static int
 process_library (struct filename *l)
 {
-	char		*buffptr;
+	char            *buffptr;
 	char		*objsptr;
 	struct filename	*f;
 	size_t		bufflen;
 	int		ret;
-	char		buff[COB_MEDIUM_BUFF];
+	char		*buff;
 	char		name[COB_MEDIUM_BUFF];
 	char		objs[COB_MEDIUM_BUFF] = "\0";
+        int             format_string_length;
+	int             buffer_size;
+	int             return_code;
 
 	bufflen = 0;
 	for (f = l; f; f = f->next) {
@@ -2074,6 +2189,20 @@ process_library (struct filename *l)
 	}
 
 #ifdef _MSC_VER
+        format_string_length = strlen(gflag_set ?
+		"  /Od /MDd /LDd /Zi /FR /Fe\" \"   " :
+		"  /MD /LD /Fe\" \"   ");
+
+	buffer_size =
+		format_string_length +
+		strlen(cob_cc) +
+		strlen(name) +
+		strlen(cob_ldflags) +
+		strlen(objsptr.) +
+		strlen(cob_libs) + 1;
+
+	buff = malloc(buffer_size);
+
 	sprintf (buff, gflag_set ?
 		"%s /Od /MDd /LDd /Zi /FR /Fe\"%s\" %s %s %s" :
 		"%s /MD /LD /Fe\"%s\" %s %s %s",
@@ -2095,6 +2224,23 @@ process_library (struct filename *l)
 	sprintf (buff, "%s.lib", name);
 	cobc_check_action (buff);
 #else	/* _MSC_VER */
+        format_string_length = strlen("    -o   ");
+
+	buffer_size =
+		format_string_length +
+		strlen(cob_cc) +
+		strlen(gccpipe) +
+		strlen(COB_SHARED_OPT) +
+		strlen(cob_ldflags) +
+		strlen(COB_PIC_FLAGS) +
+		strlen(COB_EXPORT_DYN) +
+		strlen(name) +
+                strlen(objsptr) +
+                strlen(cob_libs) + 1;
+
+	buffptr = malloc(buffer_size);
+	buff = malloc(buffer_size);
+
 	sprintf (buffptr, "%s %s %s %s %s %s -o %s %s %s",
 		 cob_cc, gccpipe, COB_SHARED_OPT, cob_ldflags, COB_PIC_FLAGS,
 		 COB_EXPORT_DYN, name, objsptr, cob_libs);
@@ -2106,7 +2252,10 @@ process_library (struct filename *l)
 	}
 #endif
 #endif	/* _MSC_VER */
-	return ret;
+	return_code = process (buff);
+
+        free(buff);
+	return return_code;
 }
 
 static int
@@ -2117,9 +2266,12 @@ process_link (struct filename *l)
 	struct filename	*f;
 	size_t		bufflen;
 	int		ret;
-	char		buff[COB_MEDIUM_BUFF];
+	char		*buff;
 	char		name[COB_MEDIUM_BUFF];
 	char		objs[COB_MEDIUM_BUFF] = "\0";
+        int             format_string_length;
+	int             buffer_size;
+	int             return_code;
 
 	bufflen = 0;
 	for (f = l; f; f = f->next) {
@@ -2159,6 +2311,21 @@ process_link (struct filename *l)
 		buffptr = buff;
 	}
 #ifdef _MSC_VER
+        format_string_length = strlen(gflag_set ?
+		"  /Od /MDd /Zi /FR /Fe\" \"    " :
+		"  /MD /Fe\" \"    ");
+
+	buffer_size =
+		format_string_length +
+		strlen(cob_cc) +
+		strlen(name) +
+		strlen(cob_ldflags) +
+		strlen(objsptr) +
+		strlen(cob_libs) +
+		strlen(manilink) + 1;
+
+	buff = malloc(buffer_size);
+
 	sprintf (buff, gflag_set ?
 		"%s /Od /MDd /Zi /FR /Fe\"%s\" %s %s %s %s" :
 		"%s /MD /Fe\"%s\" %s %s %s %s",
@@ -2176,6 +2343,21 @@ process_link (struct filename *l)
 	}
 #endif
 #else	/* _MSC_VER */
+        format_string_length = strlen("    -o   ");
+
+	buffer_size =
+		format_string_length +
+		strlen(cob_cc) +
+		strlen(gccpipe) +
+		strlen(cob_ldflags) +
+		strlen(COB_EXPORT_DYN) +
+		strlen(name) +
+		strlen(objsptr) +
+                strlen(cob_libs) + 1;
+
+	buffptr = malloc(buffer_size);
+	buff = malloc(buffer_size);
+
 	sprintf (buffptr, "%s %s %s %s -o %s %s %s",
 		 cob_cc, gccpipe, cob_ldflags, COB_EXPORT_DYN, name,
 		 objsptr, cob_libs);
@@ -2194,8 +2376,12 @@ process_link (struct filename *l)
 	}
 #endif
 #endif	/* _MSC_VER */
-	return ret;
-}
+	//return_code = process (buff);
+
+	free(buff);
+	return return_code;
+
+};
 
 int
 main (int argc, char *argv[])
