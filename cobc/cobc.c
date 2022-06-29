@@ -2271,6 +2271,7 @@ process_link (struct filename *l)
 	char		objs[COB_MEDIUM_BUFF] = "\0";
         int             format_string_length;
 	int             buffer_size;
+	int             return_code;
 
 	bufflen = 0;
 	for (f = l; f; f = f->next) {
@@ -2376,10 +2377,10 @@ process_link (struct filename *l)
 #endif
 #endif	/* _MSC_VER */
 	//return_code = process (buff);
-	
-        ret = process (buff); 
+
 	free(buff);
-	return ret;
+	return return_code;
+
 };
 
 int
