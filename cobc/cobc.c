@@ -2252,7 +2252,7 @@ process_library (struct filename *l)
 	}
 #endif
 #endif	/* _MSC_VER */
-	return_code = ret (buff);
+	return_code = process (buff);
 
         free(buff);
 	return return_code;
@@ -2376,7 +2376,7 @@ process_link (struct filename *l)
 	}
 #endif
 #endif	/* _MSC_VER */
-	return_code = process (buff);
+	//return_code = process (buff);
 
 	free(buff);
 	return return_code;
