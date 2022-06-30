@@ -1575,27 +1575,24 @@ process (const char *cmd)
 }
 
 static char*
-format_string(const char* format, ...)
+format_string(const char* format, va_list ap)
 {
 	char *buff;
 	int buff_length;
 	char* param;
-	va_list ap, bp;
-	const char *p;
+	va_list bp;
+	int i = 0;
 
-	va_start(ap, format);
 	va_copy(bp, ap);
 
 	buff_length = 0;
-	p = format;
-
-	while(*p != '\0') {
-		if(*p == '%' && *(p + 1) == 's') {
-			p += 2;
+	while(*(format + i) != 0) {
+		if(*(format+i) == '%' && *(format + i + 1) == 's') {
+			i += 2;
 			param = va_arg(ap, char*);
 			buff_length += strlen(param);
 		} else {
-			p++;
+			i++;
 			buff_length++;
 		}
 	}
@@ -1604,7 +1601,6 @@ format_string(const char* format, ...)
 
 	vsprintf(buff, format, bp);
 
-	va_end(ap);
 	va_end(bp);
 
 	return buff;
