@@ -1575,6 +1575,73 @@ process (const char *cmd)
 	return ret;
 }
 
+static char*
+format_string(const char* format, va_list ap)
+{
+	char *buff;
+	int buff_length;
+	char* param;
+	va_list bp;
+	int i = 0;
+
+	va_copy(bp, ap);
+
+	buff_length = 0;
+	while(*(format + i) != 0) {
+		if(*(format+i) == '%' && *(format + i + 1) == 's') {
+			i += 2;
+			param = va_arg(ap, char*);
+			buff_length += strlen(param);
+		} else {
+			i++;
+			buff_length++;
+		}
+	}
+
+	buff = (char*)malloc((buff_length + 1) * sizeof(char));
+
+	vsprintf(buff, format, bp);
+
+	va_end(bp);
+
+	return buff;
+}
+
+static int
+processf(const char* format, ...)
+{
+	char* buff;
+	int ret;
+	va_list ap;
+
+	va_start(ap, format);
+	buff = format_string(format, ap);
+	va_end(ap);
+
+	ret = process(buff);
+	free(buff);
+
+	return ret;
+}
+
+#ifdef _MSC_VER
+
+static void
+cobc_check_actionf(const char* format, ...)
+{
+	char* buff;
+	va_list ap;
+
+	va_start(ap, format);
+	buff = format_string(format, ap);
+	va_end(ap);
+
+	cobc_check_action(buff);
+	free(buff);
+}
+
+#endif
+
 /* Preprocess source */
 
 static int
@@ -1832,7 +1899,6 @@ process_translate (struct filename *fn)
 static int
 process_compile (struct filename *fn)
 {
-	char buff[COB_MEDIUM_BUFF];
 	char name[COB_MEDIUM_BUFF];
 
 	if (output_name) {
@@ -1847,16 +1913,16 @@ process_compile (struct filename *fn)
 #endif
 	}
 #ifdef _MSC_VER
-	sprintf (buff, gflag_set ?
+	return processf(gflag_set ?
 		"%s /c %s %s /Od /MDd /Zi /FR /c /Fa\"%s\" /Fo\"%s\" %s" :
 		"%s /c %s %s /MD /c /Fa\"%s\" /Fo\"%s\" %s",
 			cob_cc, cob_cflags, cob_define_flags, name,
 			name, fn->translate);
+
 #else
-	sprintf (buff, "%s %s -S -o \"%s\" %s %s %s", cob_cc, gccpipe, name,
+	return processf ("%s %s -S -o \"%s\" %s %s %s", cob_cc, gccpipe, name,
 			cob_cflags, cob_define_flags, fn->translate);
 #endif
-	return process (buff);
 }
 
 /* Create single-element assembled object */
@@ -1891,7 +1957,6 @@ static int
 process_module_direct (struct filename *fn)
 {
 	int	ret;
-	char	buff[COB_MEDIUM_BUFF];
 	char	name[COB_MEDIUM_BUFF];
 
 	if (output_name) {
@@ -1914,37 +1979,29 @@ process_module_direct (struct filename *fn)
 
 
 #ifdef _MSC_VER
-	sprintf (buff, gflag_set ?
+	ret = processf (gflag_set ?
 		"%s %s %s /Od /MDd /LDd /Zi /FR /Fe\"%s\" /Fo\"%s\" %s \"%s\" %s %s" :
 		"%s %s %s /MD /LD /Fe\"%s\" /Fo\"%s\" %s \"%s\" %s %s",
 		cob_cc, cob_cflags, cob_define_flags, name, name,
 		cob_ldflags, fn->translate, cob_libs, manilink);
-	ret = process (buff);
 #if _MSC_VER >= 1400
 	/* Embedding manifest */
 	if (ret == 0) {
-		sprintf (buff,
-			 "%s /manifest \"%s.dll.manifest\" /outputresource:\"%s.dll\";#2",
+		ret = processf ("%s /manifest \"%s.dll.manifest\" /outputresource:\"%s.dll\";#2",
 			 manicmd, name, name);
-		ret = process (buff);
-		sprintf (buff, "%s.dll.manifest", name);
-		cobc_check_action (buff);
+		cobc_check_actionf ("%s.dll.manifest", name);
 	}
 #endif
-	sprintf (buff, "%s.exp", name);
-	cobc_check_action (buff);
-	sprintf (buff, "%s.lib", name);
-	cobc_check_action (buff);
+	cobc_check_actionf ("%s.exp", name);
+	cobc_check_actionf ("%s.lib", name);
 #else	/* _MSC_VER */
-	sprintf (buff, "%s %s %s %s %s %s %s %s -o %s %s %s",
+	ret = processf ("%s %s %s %s %s %s %s %s -o %s %s %s",
 		 cob_cc, gccpipe, cob_cflags, cob_define_flags, COB_SHARED_OPT,
 		 cob_ldflags, COB_PIC_FLAGS, COB_EXPORT_DYN, name,
 		 fn->translate, cob_libs);
-	ret = process (buff);
 #ifdef	COB_STRIP_CMD
 	if (strip_output && ret == 0) {
-		sprintf (buff, "%s \"%s\"", COB_STRIP_CMD, name);
-		ret = process (buff);
+		ret = processf ("%s \"%s\"", COB_STRIP_CMD, name);
 	}
 #endif
 #endif	/* _MSC_VER */
@@ -1957,7 +2014,6 @@ static int
 process_module (struct filename *fn)
 {
 	int	ret;
-	char	buff[COB_MEDIUM_BUFF];
 	char	name[COB_MEDIUM_BUFF];
 
 	if (output_name) {
@@ -1978,11 +2034,10 @@ process_module (struct filename *fn)
 #endif
 	}
 #ifdef _MSC_VER
-	sprintf (buff, gflag_set ?
+	processf (gflag_set ?
 		"%s /Od /MDd /LDd /Zi /FR /Fe\"%s\" %s \"%s\" %s" :
 		"%s /MD /LD /Fe\"%s\" %s \"%s\" %s",
 			cob_cc, name, cob_ldflags, fn->object, cob_libs);
-	ret = process (buff);
 #if _MSC_VER >= 1400
 	/* Embedding manifest */
 	if (ret == 0) {
@@ -1990,23 +2045,18 @@ process_module (struct filename *fn)
 			 "%s /manifest \"%s.dll.manifest\" /outputresource:\"%s.dll\";#2",
 			 manicmd, name, name);
 		ret = process (buff);
-		sprintf (buff, "%s.dll.manifest", name);
-		cobc_check_action (buff);
+		cobc_check_actionf ("%s.dll.manifest", name);
 	}
 #endif
-	sprintf (buff, "%s.exp", name);
-	cobc_check_action (buff);
-	sprintf (buff, "%s.lib", name);
-	cobc_check_action (buff);
+	cobc_check_actionf ("%s.exp", name);
+	cobc_check_actionf ("%s.lib", name);
 #else	/* _MSC_VER */
-	sprintf (buff, "%s %s %s %s %s %s -o %s %s %s",
+	ret = processf ("%s %s %s %s %s %s -o %s %s %s",
 		 cob_cc, gccpipe, COB_SHARED_OPT, cob_ldflags, COB_PIC_FLAGS,
 		 COB_EXPORT_DYN, name, fn->object, cob_libs);
-	ret = process (buff);
 #ifdef	COB_STRIP_CMD
 	if (strip_output && ret == 0) {
-		sprintf (buff, "%s %s", COB_STRIP_CMD, name);
-		ret = process (buff);
+		ret = processf ("%s %s", COB_STRIP_CMD, name);
 	}
 #endif
 #endif	/* _MSC_VER */
@@ -2016,12 +2066,10 @@ process_module (struct filename *fn)
 static int
 process_library (struct filename *l)
 {
-	char		*buffptr;
 	char		*objsptr;
 	struct filename	*f;
 	size_t		bufflen;
 	int		ret;
-	char		buff[COB_MEDIUM_BUFF];
 	char		name[COB_MEDIUM_BUFF];
 	char		objs[COB_MEDIUM_BUFF] = "\0";
 
@@ -2067,42 +2115,29 @@ process_library (struct filename *l)
 			+ strlen (COB_EXPORT_DYN) + strlen (COB_SHARED_OPT)
 			+ strlen (name) + strlen (objsptr) + strlen (cob_libs)
 			+ strlen (COB_PIC_FLAGS) + 16;
-	if (bufflen >= COB_MEDIUM_BUFF) {
-		buffptr = cobc_malloc (bufflen);
-	} else {
-		buffptr = buff;
-	}
 
 #ifdef _MSC_VER
-	sprintf (buff, gflag_set ?
+	ret = processf (gflag_set ?
 		"%s /Od /MDd /LDd /Zi /FR /Fe\"%s\" %s %s %s" :
 		"%s /MD /LD /Fe\"%s\" %s %s %s",
 			cob_cc, name, cob_ldflags, objsptr, cob_libs);
-	ret = process (buff);
 #if _MSC_VER >= 1400
 	/* Embedding manifest */
 	if (ret == 0) {
-		sprintf (buff,
-			 "%s /manifest \"%s.dll.manifest\" /outputresource:\"%s.dll\";#2",
+		ret = processf ("%s /manifest \"%s.dll.manifest\" /outputresource:\"%s.dll\";#2",
 			 manicmd, name, name);
-		ret = process (buff);
-		sprintf (buff, "%s.dll.manifest", name);
-		cobc_check_action (buff);
+		cobc_check_actionf ("%s.dll.manifest", name);
 	}
 #endif
-	sprintf (buff, "%s.exp", name);
-	cobc_check_action (buff);
-	sprintf (buff, "%s.lib", name);
-	cobc_check_action (buff);
+	cobc_check_actionf ("%s.exp", name);
+	cobc_check_actionf ("%s.lib", name);
 #else	/* _MSC_VER */
-	sprintf (buffptr, "%s %s %s %s %s %s -o %s %s %s",
+	ret = processf ("%s %s %s %s %s %s -o %s %s %s",
 		 cob_cc, gccpipe, COB_SHARED_OPT, cob_ldflags, COB_PIC_FLAGS,
 		 COB_EXPORT_DYN, name, objsptr, cob_libs);
-	ret = process (buffptr);
 #ifdef	COB_STRIP_CMD
 	if (strip_output && ret == 0) {
-		sprintf (buff, "%s %s", COB_STRIP_CMD, name);
-		ret = process (buff);
+		ret = processf ("%s %s", COB_STRIP_CMD, name);
 	}
 #endif
 #endif	/* _MSC_VER */
@@ -2112,12 +2147,10 @@ process_library (struct filename *l)
 static int
 process_link (struct filename *l)
 {
-	char		*buffptr;
 	char		*objsptr;
 	struct filename	*f;
 	size_t		bufflen;
 	int		ret;
-	char		buff[COB_MEDIUM_BUFF];
 	char		name[COB_MEDIUM_BUFF];
 	char		objs[COB_MEDIUM_BUFF] = "\0";
 
@@ -2150,47 +2183,31 @@ process_link (struct filename *l)
 		file_basename (l->source, name);
 	}
 
-	bufflen = strlen (cob_cc) + strlen (gccpipe) + strlen (cob_ldflags)
-			+ strlen (COB_EXPORT_DYN) + strlen (name)
-			+ strlen (objsptr) + strlen (cob_libs) + 16;
-	if (bufflen >= COB_MEDIUM_BUFF) {
-		buffptr = cobc_malloc (bufflen);
-	} else {
-		buffptr = buff;
-	}
 #ifdef _MSC_VER
-	sprintf (buff, gflag_set ?
+	ret = processf (gflag_set ?
 		"%s /Od /MDd /Zi /FR /Fe\"%s\" %s %s %s %s" :
 		"%s /MD /Fe\"%s\" %s %s %s %s",
 			cob_cc, name, cob_ldflags, objsptr, cob_libs, manilink);
-	ret = process (buff);
 #if _MSC_VER >= 1400
 	/* Embedding manifest */
 	if (ret == 0) {
-		sprintf (buff, 
-			 "%s /manifest \"%s.exe.manifest\" /outputresource:\"%s.exe\";#1",
+		ret = processf ("%s /manifest \"%s.exe.manifest\" /outputresource:\"%s.exe\";#1",
 			 manicmd, name, name);
-		ret = process (buff);
-		sprintf (buff, "%s.exe.manifest", name);
-		cobc_check_action (buff);
+		cobc_check_actionf ("%s.exe.manifest", name);
 	}
 #endif
 #else	/* _MSC_VER */
-	sprintf (buffptr, "%s %s %s %s -o %s %s %s",
+	ret = processf ("%s %s %s %s -o %s %s %s",
 		 cob_cc, gccpipe, cob_ldflags, COB_EXPORT_DYN, name,
 		 objsptr, cob_libs);
-
-	ret = process (buffptr);
 #ifdef	__hpux
 	if (ret == 0) {
-		sprintf (buff, "chatr -s +s enable %s%s 1>/dev/null 2>&1", name, COB_EXEEXT);
-		process (buff);
+		processf ("chatr -s +s enable %s%s 1>/dev/null 2>&1", name, COB_EXEEXT);
 	}
 #endif
 #ifdef	COB_STRIP_CMD
 	if (strip_output && ret == 0) {
-		sprintf (buff, "%s %s%s", COB_STRIP_CMD, name, COB_EXEEXT);
-		ret = process (buff);
+		ret = processf ("%s %s%s", COB_STRIP_CMD, name, COB_EXEEXT);
 	}
 #endif
 #endif	/* _MSC_VER */
