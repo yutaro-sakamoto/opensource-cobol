@@ -1615,8 +1615,10 @@ processf(const char* format, ...)
 
 	va_start(ap, format);
 	buff = format_string(format, ap);
-	ret = process(buff);
 	va_end(ap);
+
+	ret = process(buff);
+	free(buff);
 
 	return ret;
 }
@@ -1631,8 +1633,10 @@ cobc_check_actionf(const char* format, ...)
 
 	va_start(ap, format);
 	buff = format_string(format, ap);
-	cobc_check_action(buff);
 	va_end(ap);
+
+	cobc_check_action(buff);
+	free(buff);
 }
 
 #endif
