@@ -222,7 +222,7 @@ static const char	*const bin_sub_funcs[] = {
 };
 /*
  *
- * unused variables present here are removed
+ * ここに存在する未使用の変数は削除されます。
  *
  */
 
